@@ -32,7 +32,7 @@ TX_STM STM2(glb_rstn,glb_clk
 wire cnt_full;
 wire [7:0] Tx_Parallel_out;
 baud_cnter cnt1(glb_rstn,glb_clk
-			    ,8'b1000
+			    ,8'b10
 			    ,STM_ctrl_baud_cnt_rstn,STM_ctrl_baud_cnt_en
 			    ,baud_ctrl_sample_en,baud_ctrl_prescaler);
 

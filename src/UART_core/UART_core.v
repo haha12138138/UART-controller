@@ -4,16 +4,16 @@ module UART_core (
 	 input glb_rstn
 	,input glb_clk
 	,input Cfg_ctrl_stopbit
-	,input Cfg_ctrl_paritybit
+	,input[1:0]Cfg_ctrl_paritybit
 	,input Cfg_ctrl_Rx_en
 	,input Cfg_ctrl_Tx_en
 	,input FIFO_ctrl_full
 	,input FIFO_ctrl_empty
 	,output [7:0]UART_Rx_data_payload
 	,output UART_ctrl_FIFO_w_en
-	,output [7:0]UART_Tx_data_payload
+	,input [7:0]UART_Tx_data_payload
 	,output UART_ctrl_FIFO_r_en
-	,output usr_data_payload
+	,input UART_RX_data_bit
 	,output UART_Tx_data_bit
 );
 UART_Rx_module Rx(
@@ -22,7 +22,7 @@ UART_Rx_module Rx(
 	,Cfg_ctrl_stopbit 
 	,Cfg_ctrl_paritybit 
 	,Cfg_ctrl_Rx_en 
-	,usr_data_payload 
+	,UART_RX_data_bit 
 	,FIFO_ctrl_full
 	,UART_Rx_data_payload 
 	,UART_ctrl_FIFO_w_en

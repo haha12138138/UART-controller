@@ -36,7 +36,7 @@ RX_STM STM(glb_rstn,glb_clk
 			usr_data_rcvbit);
 wire cnt_full;
 baud_cnter #(8,2,1) Rx_cnter(glb_rstn,glb_clk
-					,8'b1000
+					,8'b10
 					,cnt_ld_en,Rx_cnt_en
 					,Sample_en,baud_ctrl_prescalerout);
 Edge_detector Edge(glb_rstn,glb_clk

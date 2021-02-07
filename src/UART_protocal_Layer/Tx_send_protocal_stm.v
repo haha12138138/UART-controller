@@ -52,7 +52,6 @@ end // always
 
 always @ (*)
 begin
-	PROT_CORE_ctrl_empty=CFG_PROT_ctrl_empty;
 	case(state)
 	INIT:
 	begin
@@ -60,6 +59,7 @@ begin
 		PROT_CFG_ctrl_Txsel=0;
 		PROT_CFG_ctrl_tx_r_en=0;
 		PROT_CFG_ctrl_tx_rst=0;
+		PROT_CORE_ctrl_empty=0;
 	end
 	SEND_SLAVE_ADDR:
 	begin
@@ -67,6 +67,7 @@ begin
 		PROT_CFG_ctrl_Txsel=0;
 		PROT_CFG_ctrl_tx_r_en=0;
 		PROT_CFG_ctrl_tx_rst=0;
+		PROT_CORE_ctrl_empty=0;
 	end
 	SEND_DATA:
 	begin
@@ -74,6 +75,7 @@ begin
 		PROT_CFG_ctrl_Txsel=1;
 		PROT_CFG_ctrl_tx_r_en=CORE_CFG_r_en&!CFG_PROT_ctrl_empty;
 		PROT_CFG_ctrl_tx_rst=0;
+		PROT_CORE_ctrl_empty=0;
 	end
 	SEND_STOP_FRAME:
 	begin
@@ -81,6 +83,7 @@ begin
 		PROT_CFG_ctrl_Txsel=2;
 		PROT_CFG_ctrl_tx_r_en=0;
 		PROT_CFG_ctrl_tx_rst=CORE_CFG_r_en;
+		PROT_CORE_ctrl_empty=CORE_CFG_r_en;
 	end
 	endcase
 end // always
