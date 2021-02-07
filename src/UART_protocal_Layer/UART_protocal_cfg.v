@@ -11,13 +11,14 @@ module UART_protocal_cfg (
 	,input PROT_CFG_ctrl_tx_r_en
 	,input PROT_CFG_ctrl_rx_w_en
 	,input [1:0]PROT_CFG_ctrl_Txsel
-	,output [7:0]CFG_SEL_data_tx_data 
+	,output reg [7:0]CFG_SEL_data_tx_data 
+	,input  [7:0]CORE_CFG_data_rx_data 
 	,output [7:0]CFG_USR_data_rx_data
 	,output Tx_FIFO_full
 	,output Tx_FIFO_empty
 	,output Rx_FIFO_full
 	,output Rx_FIFO_empty
-	,output parity_cfg
+	,output[1:0] parity_cfg
 	,output stop_cfg
 	,output CFG_PROT_ctrl_Txen
 	,output CFG_PROT_ctrl_rxen
@@ -35,15 +36,36 @@ reg [7:0] baud_cmpval;	//5
 //7 Rx FIFO
 reg parity_cfg_reg;//8 parity cfg
 reg stop_cfg_reg;//9 stop cfg
-assign parity_cfg=parity_cfg_reg;
+assign parity_cfg={parity_cfg_reg,1'b1};
 assign stop_cfg = stop_cfg_reg;
 reg TX_FIFO_w_en;
 reg RX_FIFO_r_en;
 reg [9:0] decoder_ctrl_addr;
-
+wire[7:0] Tx_FIFO_data;
 always @ (*)
 begin
 	decoder_ctrl_addr=(1<<(usr_data_addr));
+end // always
+always @ (*)
+begin
+	case(PROT_CFG_ctrl_Txsel)
+	0:
+	begin
+		CFG_SEL_data_tx_data=slave_addr;
+	end
+	1:
+	begin
+		CFG_SEL_data_tx_data=Tx_FIFO_data;
+	end
+	2:
+	begin
+		CFG_SEL_data_tx_data=stop_frame;
+	end
+	default:
+	begin
+		CFG_SEL_data_tx_data=0;
+	end
+	endcase
 end // always
 
 always @(*)
@@ -53,10 +75,10 @@ begin
 end
 Sync_FIFO TX_FIFO(glb_rstn,glb_clk
 				 ,usr_data_cfgdata,1'b0,1'b0,3'b0
-				 ,PROT_CFG_ctrl_tx_r_en,TX_FIFO_w_en,CFG_SEL_data_tx_data
+				 ,PROT_CFG_ctrl_tx_r_en,TX_FIFO_w_en,Tx_FIFO_data
 				 ,Tx_FIFO_full,Tx_FIFO_empty);
 Sync_FIFO RX_FIFO(glb_rstn,glb_clk
-				 ,usr_data_cfgdata,1'b0,1'b0,3'b0
+				 ,CORE_CFG_data_rx_data,1'b0,1'b0,3'b0
 				 ,RX_FIFO_r_en,PROT_CFG_ctrl_rx_w_en,CFG_USR_data_rx_data
 				 ,Rx_FIFO_full,Rx_FIFO_empty);
 always @(negedge glb_rstn or posedge glb_clk)
